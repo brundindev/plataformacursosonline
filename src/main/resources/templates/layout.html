@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${title} ?: 'Título por Defecto'">Título por Defecto</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+
+<header>
+  <h1>Menú</h1>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Inicio</a></li>
+      <li><a th:href="@{/servicios}">Servicios</a></li>
+      <li><a th:href="@{/productos}">Productos</a></li>
+      <li><a th:href="@{/contacto}">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div layout:fragment="contenido"></div>
+</main>
+
+<footer>
+  <p>© Ejemplo de Spring MVC</p>
+</footer>
+</body>
+</html>
