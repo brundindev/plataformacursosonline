@@ -20,7 +20,7 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden listar usuarios
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')") // Solo los administradores y profesores pueden listar usuarios
     @GetMapping
     public String listarUsuarios(Model model) {
         List<Usuario> usuarios = usuarioService.listarUsuarios();
@@ -35,7 +35,7 @@ public class UsuarioController {
         return "usuarios/nuevo"; // Apunta a una plantilla Thymeleaf
     }
 
-    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden guardar nuevos usuarios
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')") // Solo los administradores y profesores pueden crear nuevos usuarios
     @PostMapping
     public String crearUsuario(@RequestParam String username,
                                @RequestParam String password,

@@ -79,8 +79,24 @@ public class PlataformacursosonlineApplication implements CommandLineRunner {
 				usuario.setPassword(hashedPassword);
 				usuario.setRol(Rol.ADMIN);
 				usuarioRepository.save(usuario);
-			} else {
-				Logger.info("El usuario admin ya existe.");
+			}
+
+			if (!usuarioRepository.existsByEmail("profesor@gmail.com")) {
+				Usuario usuario = new Usuario();
+				usuario.setUsername("profesor");
+				usuario.setEmail("profesor@gmail.com");
+				usuario.setPassword(hashedPassword);
+				usuario.setRol(Rol.PROFESOR);
+				usuarioRepository.save(usuario);
+			}
+
+			if (!usuarioRepository.existsByEmail("estudiante@gmail.com")) {
+				Usuario usuario = new Usuario();
+				usuario.setUsername("estudiante");
+				usuario.setEmail("estudiante@gmail.com");
+				usuario.setPassword(hashedPassword);
+				usuario.setRol(Rol.ESTUDIANTE);
+				usuarioRepository.save(usuario);
 			}
 		};
 	}

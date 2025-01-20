@@ -33,7 +33,7 @@ public class UsuarioService {
 
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
-        usuario.setPassword(passwordEncoder.encode(password)); // Encriptar contraseña
+        usuario.setPassword(passwordEncoder.encode(password));
         usuario.setEmail(email);
         usuario.setRol(rol);
 
@@ -41,13 +41,13 @@ public class UsuarioService {
     }
 
     // Listar todos los usuarios
-    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden listar usuarios
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')") // Solo los administradores y profesores pueden listar usuarios
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
     // Buscar un usuario por su nombre de usuario
-    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden buscar usuarios
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')") // Solo los administradores y profesores pueden buscar usuarios
     public Optional<Usuario> buscarPorUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }

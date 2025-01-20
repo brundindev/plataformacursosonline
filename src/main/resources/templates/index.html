@@ -47,8 +47,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/cursos">Cursos</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${#authorization.expression('hasRole(''ADMIN'') or hasRole(''PROFESOR'')')}">
                         <a class="nav-link" href="/usuarios">Usuarios</a>
+                    </li>
+                    <li th:if="${#authorization.expression('!isAuthenticated()')}">
+                        <a class="nav-link" href="/login">Iniciar Sesión</a>
                     </li>
                 </ul>
                 <form class="d-flex ms-auto" action="/logout" method="post">
