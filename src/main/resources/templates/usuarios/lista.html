@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Lista de Usuarios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="my-4">Lista de Usuarios</h1>
+    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/usuarios/nuevo" class="btn btn-primary mb-3">Añadir Usuario</a>
+    <a href="/" class="btn btn-primary mb-3">Volver</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre de Usuario</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.username}">Nombre de Usuario</td>
+            <td th:text="${usuario.email}">Email</td>
+            <td th:text="${usuario.rol}">Rol</td>
+            <td>
+                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/usuarios/{id}/editar(id=${usuario.id})}" class="btn btn-warning btn-sm">Editar</a>
+                <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{/usuarios/{id}/eliminar(id=${usuario.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
