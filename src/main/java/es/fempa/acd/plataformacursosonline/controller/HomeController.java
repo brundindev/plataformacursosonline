@@ -14,9 +14,9 @@ public class HomeController {
         this.cursoService = cursoService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home(Model model) {
         model.addAttribute("cursos", cursoService.listarCursos());
-        return "index";
+        return "home";
     }
 }

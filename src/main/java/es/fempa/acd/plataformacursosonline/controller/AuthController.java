@@ -11,7 +11,7 @@ public class AuthController {
     public String login() {
         return "login";
     }
-    
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/dashboard")
     public String adminDashboard() {

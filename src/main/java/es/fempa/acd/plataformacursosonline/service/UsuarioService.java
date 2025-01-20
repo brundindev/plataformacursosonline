@@ -21,8 +21,7 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Crear un nuevo usuario
-    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden crear usuarios
+    @PreAuthorize("hasRole('ADMIN')")
     public Usuario crearUsuario(String username, String password, String email, Rol rol) {
         if (usuarioRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("El nombre de usuario ya está en uso");
@@ -40,19 +39,17 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    // Listar todos los usuarios
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')") // Solo los administradores y profesores pueden listar usuarios
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
-    // Buscar un usuario por su nombre de usuario
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')") // Solo los administradores y profesores pueden buscar usuarios
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     public Optional<Usuario> buscarPorUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }
 
-    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden eliminar usuarios
+    @PreAuthorize("hasRole('ADMIN')")
 	public void eliminarUsuario(Long id) {
 		usuarioRepository.deleteById(id);
 		
@@ -68,5 +65,23 @@ public class UsuarioService {
 
     public Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id).orElse(null);
+    }
+
+    public boolean existsByUsername(String username) {
+        return usuarioRepository.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return usuarioRepository.existsByEmail(email);
+    }
+
+    public Usuario registerUsuario(Usuario usuario) {
+        if (usuarioRepository.existsByUsername(usuario.getUsername())) {
+            throw new IllegalArgumentException("El nombre de usuario ya está en uso");
+        }
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new IllegalArgumentException("El email ya está en uso");
+        }
+        return usuarioRepository.save(usuario);
     }
 }
