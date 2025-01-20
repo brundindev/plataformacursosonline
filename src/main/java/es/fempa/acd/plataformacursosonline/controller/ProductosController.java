@@ -1,30 +1,30 @@
 package es.fempa.acd.plataformacursosonline.controller;
 
-import es.fempa.acd.plataformacursosonline.model.ProductoService;
+import es.fempa.acd.plataformacursosonline.model.CursoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import es.fempa.acd.plataformacursosonline.model.Producto;
+import es.fempa.acd.plataformacursosonline.model.Curso;
 
 import java.util.List;
 
 @Controller
 public class ProductosController {
 
-    ProductoService productoService;
+    CursoService cursoService;
 
-    public ProductosController(ProductoService productoService) {
-        this.productoService = productoService;
+    public ProductosController(CursoService cursoService) {
+        this.cursoService = cursoService;
     }
 
-    @GetMapping("/productos")
-    public String listarProductos(Model model) {
-        List<Producto> listaProductos = productoService.getProductos();
-        model.addAttribute("prods", listaProductos);
+    @GetMapping("/cursos")
+    public String listarCursos(Model model) {
+        List<Curso> listaCursos = cursoService.getCursos();
+        model.addAttribute("cursos", listaCursos);
 
-        model.addAttribute("title", "Bienvenido a la lista de productos de FEMPA");
+        model.addAttribute("title", "Bienvenido a la lista de cursos de la Plataforma");
 
-        return "productos";
+        return "cursos";
     }
 }

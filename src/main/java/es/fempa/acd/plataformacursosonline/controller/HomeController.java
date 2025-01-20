@@ -9,7 +9,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String inicio(Model model) {
-        model.addAttribute("title", "Bienvenido a la web de FEMPA");
+        model.addAttribute("title", "Bienvenido a la Plataforma de Cursos Online");
         return "index";
     }
 

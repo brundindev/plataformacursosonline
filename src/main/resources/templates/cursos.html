@@ -5,15 +5,15 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title th:text="${title != null ? title : 'Listado de Servicios'}">Listado de Servicios</title>
+  <title th:text="${title != null ? title : 'Listado de Cursos'}">Listado de Cursos</title>
 </head>
 <body>
 <div>
-  <h1 th:text="${title != null ? title : 'Listado de Servicios'}">Listado de Servicios</h1>
+  <h1 th:text="${title != null ? title : 'Listado de Cursos'}">Listado de Cursos</h1>
   <div layout:fragment="contenido">
     <ul>
-      <li th:each="servicio : ${servicios}">
-        <span th:text="${servicio.nombre}"></span> - <span th:text="${servicio.precio}"></span> €
+      <li th:each="curso : ${cursos}">
+        <span th:text="${curso.nombre}"></span> - <span th:text="${curso.descripcion}"></span> - <span th:text="${curso.precio}"></span> €
       </li>
     </ul>
   </div>
