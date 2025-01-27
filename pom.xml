@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>es.fempa.acd</groupId>
     <artifactId>plataformacursosonline</artifactId>
@@ -61,7 +61,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>6.6.4.Final</version>
         </dependency>
-        <!-- TinyLog -->
         <dependency>
             <groupId>org.tinylog</groupId>
             <artifactId>tinylog-api</artifactId>

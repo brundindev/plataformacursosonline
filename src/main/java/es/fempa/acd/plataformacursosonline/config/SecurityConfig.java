@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/profesor/**").hasRole(Rol.PROFESOR.name())
                         .requestMatchers("/estudiante/**").hasRole(Rol.ESTUDIANTE.name())
                         .requestMatchers("/registro", "/login").permitAll()
+                        .requestMatchers("/usuarios/perfil/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

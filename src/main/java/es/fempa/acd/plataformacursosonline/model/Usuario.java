@@ -24,10 +24,6 @@ public class Usuario {
     @Column(nullable = false)
     private Rol rol;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Favorito> favoritos = new HashSet<>();
-
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -66,13 +62,5 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
-    }
-
-    public Set<Favorito> getFavoritos() {
-        return favoritos;
-    }
-
-    public void setFavoritos(Set<Favorito> favoritos) {
-        this.favoritos = favoritos;
     }
 }

@@ -44,7 +44,6 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
     public Optional<Usuario> buscarPorUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }
@@ -55,6 +54,7 @@ public class UsuarioService {
 		
 	}
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void editarUsuario(Long id, String username, String email, Rol rol) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
         usuario.setUsername(username);

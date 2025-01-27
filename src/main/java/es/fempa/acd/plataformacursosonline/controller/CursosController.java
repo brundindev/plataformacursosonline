@@ -2,6 +2,7 @@ package es.fempa.acd.plataformacursosonline.controller;
 
 import es.fempa.acd.plataformacursosonline.model.Curso;
 import es.fempa.acd.plataformacursosonline.service.CursoService;
+import es.fempa.acd.plataformacursosonline.service.PublicacionService;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -15,9 +16,11 @@ import java.util.List;
 public class CursosController {
 
     private final CursoService cursoService;
+    private final PublicacionService publicacionService;
 
-    public CursosController(CursoService cursoService) {
+    public CursosController(CursoService cursoService, PublicacionService publicacionService) {
         this.cursoService = cursoService;
+        this.publicacionService = publicacionService;
     }
 
     @GetMapping
@@ -47,7 +50,7 @@ public class CursosController {
     public String mostrarFormularioEditarCurso(@PathVariable Long id, Model model) {
         Curso curso = cursoService.buscarPorId(id);
         model.addAttribute("curso", curso);
-        return "cursos/editar"; // Devuelve la plantilla "editar.html"
+        return "cursos/editar";
     }
 
     @PostMapping("/{id}/editar")
@@ -69,5 +72,16 @@ public class CursosController {
     public String eliminarCurso(@PathVariable Long id) {
         cursoService.eliminarCurso(id);
         return "redirect:/cursos";
+    }
+
+    @GetMapping("/{id}")
+    public String verCurso(@PathVariable Long id, Model model) {
+        Curso curso = cursoService.buscarPorId(id);
+        if (curso == null) {
+            return "error";
+        }
+        model.addAttribute("curso", curso);
+        model.addAttribute("publicaciones", publicacionService.listarPublicacionesPorCurso(id));
+        return "cursos/ver";
     }
 }

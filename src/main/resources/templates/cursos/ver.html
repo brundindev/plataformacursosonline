@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${curso.nombre}">Detalles del Curso</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #007bff, #6f42c1);
+            color: white;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-secondary {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${curso.nombre}">Nombre del Curso</h1>
+    <p th:text="${curso.descripcion}">Descripción del Curso</p>
+    <p>Precio: <span th:text="${curso.precio}">0.00</span> €</p>
+    <a href="/cursos" class="btn btn-primary">Volver a la lista de cursos</a>
+    
+    <div th:if="${#authorization.expression('hasRole(''PROFESOR'') or hasRole(''ADMIN'')')}">
+        <a th:href="@{/publicaciones/nueva(cursoId=${curso.id})}" class="btn btn-info mt-3">Añadir Publicación</a>
+    </div>
+
+    <h2>Publicaciones</h2>
+    <div th:each="publicacion : ${publicaciones}">
+        <h3 th:text="${publicacion.titulo}">Título de la Publicación</h3>
+        <p th:text="${publicacion.descripcion}">Descripción de la Publicación</p>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
