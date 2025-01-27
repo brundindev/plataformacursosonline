@@ -1,0 +1,59 @@
+@startuml
+package "es.fempa.acd.plataformacursosonline" {
+    class PlataformacursosonlineApplication
+
+    package config {
+        class SecurityConfig
+    }
+
+    package controller {
+        class AuthController
+        class CursosController
+        class HomeController
+        class PublicacionesController
+        class RegistroController
+        class UsuarioController
+    }
+
+    package model {
+        class Curso
+        class Publicacion
+        class Rol
+        class Usuario
+    }
+
+    package repository {
+        class CursoRepository
+        class PublicacionRepository
+        class UsuarioRepository
+    }
+
+    package service {
+        class CursoService
+        class CustomUserDetailsService
+        class PublicacionService
+        class UsuarioService
+    }
+}
+
+PlataformacursosonlineApplication --> config::SecurityConfig
+PlataformacursosonlineApplication --> controller::AuthController
+PlataformacursosonlineApplication --> controller::CursosController
+PlataformacursosonlineApplication --> controller::HomeController
+PlataformacursosonlineApplication --> controller::PublicacionesController
+PlataformacursosonlineApplication --> controller::RegistroController
+PlataformacursosonlineApplication --> controller::UsuarioController
+
+controller::CursosController --> service::CursoService
+controller::PublicacionesController --> service::PublicacionService
+controller::UsuarioController --> service::UsuarioService
+controller::HomeController --> service::UsuarioService
+
+service::CursoService --> repository::CursoRepository
+service::PublicacionService --> repository::PublicacionRepository
+service::UsuarioService --> repository::UsuarioRepository
+
+model::Curso --> model::Usuario : "relación"
+model::Publicacion --> model::Usuario : "escrito por"
+model::Rol --> model::Usuario : "pertenece a"
+@enduml
