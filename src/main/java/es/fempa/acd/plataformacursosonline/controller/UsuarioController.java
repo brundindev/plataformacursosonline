@@ -4,6 +4,8 @@ import es.fempa.acd.plataformacursosonline.model.Rol;
 import es.fempa.acd.plataformacursosonline.model.Usuario;
 import es.fempa.acd.plataformacursosonline.service.UsuarioService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -94,7 +96,11 @@ public class UsuarioController {
         
         usuarioService.editarUsuario(usuario.getId(), username, email, usuario.getRol());
         
-        return "redirect:/usuarios/perfil";
+        SecurityContextHolder.getContext().setAuthentication(
+            new UsernamePasswordAuthenticationToken(usuarioService.buscarPorUsername(username).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado")), null, usuario.getRol().getAuthorities())
+        );
+        
+        return "redirect:/home";
     }
 
     @GetMapping("/acceso-denegado")

@@ -1,4 +1,4 @@
-@startuml
+@startuml diagrama_clases
 package "es.fempa.acd.plataformacursosonline" {
     class PlataformacursosonlineApplication
 

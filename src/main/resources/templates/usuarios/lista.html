@@ -10,6 +10,9 @@
             background: linear-gradient(to right, #007bff, #6f42c1);
             color: white;
         }
+        .container {
+            margin-top: 50px;
+        }
         .btn-primary {
             background-color: #28a745;
             border-color: #28a745;
@@ -18,34 +21,48 @@
             background-color: #dc3545;
             border-color: #dc3545;
         }
+        .table {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1 class="my-4">Lista de Usuarios</h1>
+    <h1 class="my-4"style="font-weight: bold;">Lista de Usuarios</h1>
     <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/usuarios/nuevo" class="btn btn-primary mb-3">Añadir Usuario</a>
     <a href="/home" class="btn btn-primary mb-3">Volver</a>
     <table class="table table-striped">
         <thead>
-        <tr>
-            <th>Nombre de Usuario</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-        </tr>
+            <tr>
+                <th>Nombre de Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
         </thead>
         <tbody>
-        <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario.username}">Nombre de Usuario</td>
-            <td th:text="${usuario.email}">Email</td>
-            <td th:text="${usuario.rol}">Rol</td>
-            <td>
-                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/usuarios/{id}/editar(id=${usuario.id})}" class="btn btn-warning btn-sm">Editar</a>
-                <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{/usuarios/{id}/eliminar(id=${usuario.id})}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                </form>
-            </td>
-        </tr>
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.username}">Nombre de Usuario</td>
+                <td th:text="${usuario.email}">Email</td>
+                <td th:text="${usuario.rol}">Rol</td>
+                <td>
+                    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/usuarios/{id}/editar(id=${usuario.id})}" class="btn btn-warning btn-sm">Editar</a>
+                    <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{/usuarios/{id}/eliminar(id=${usuario.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

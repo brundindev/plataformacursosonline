@@ -10,6 +10,9 @@
             background: linear-gradient(to right, #007bff, #6f42c1);
             color: white;
         }
+        .container {
+            margin-top: 50px;
+        }
         .btn-primary {
             background-color: #28a745;
             border-color: #28a745;
@@ -18,35 +21,49 @@
             background-color: #dc3545;
             border-color: #dc3545;
         }
+        .table {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1 class="my-4">Lista de Cursos</h1>
+    <h1 class="my-4" style="font-weight: bold;">Lista de Cursos</h1>
     <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary mb-3">Añadir Curso</a>
     <a href="/home" class="btn btn-primary mb-3">Volver</a>
     <table class="table table-striped">
         <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Acciones</th>
-        </tr>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
         </thead>
         <tbody>
-        <tr th:each="curso : ${cursos}">
-            <td th:text="${curso.nombre}">Nombre</td>
-            <td th:text="${curso.descripcion}">Descripción</td>
-            <td th:text="${curso.precio}">0.00</td>
-            <td>
-                <a th:href="@{/cursos/{id}(id=${curso.id})}" class="btn btn-info btn-sm">Ver</a>
-                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/cursos/{id}/editar(id=${curso.id})}" class="btn btn-warning btn-sm">Editar</a>
-                <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{/cursos/{id}/eliminar(id=${curso.id})}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                </form>
-            </td>
-        </tr>
+            <tr th:each="curso : ${cursos}">
+                <td th:text="${curso.nombre}" style="font-weight: bold;">Nombre</td>
+                <td th:text="${curso.descripcion}">Descripción</td>
+                <td th:text="${curso.precio}">0.00</td>
+                <td>
+                    <a th:href="@{/cursos/{id}(id=${curso.id})}" class="btn btn-info btn-sm">Ver</a>
+                    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/cursos/{id}/editar(id=${curso.id})}" class="btn btn-warning btn-sm">Editar</a>
+                    <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{/cursos/{id}/eliminar(id=${curso.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>
