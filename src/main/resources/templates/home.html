@@ -17,14 +17,15 @@
             border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+        .nav-link:hover {
+            color: #28a745 !important;
         }
         .course-card {
             margin-bottom: 1.5rem;
@@ -43,12 +44,7 @@
 </head>
 <body>
 <div class="container">
-    <div class="hero">
-        <h1 class="my-4">Bienvenido a la Plataforma de Cursos</h1>
-        <p>Explora nuestros cursos y mejora tus habilidades.</p>
-    </div>
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#" style="font-weight: bold;">Plataforma Cursos Online</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +72,8 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li>
-                                <a th:href="@{/usuarios/perfil/editar/{id}(id=${#authentication.principal.id})}" class="dropdown-item">Mi Perfil</a>                            </li>
+                                <a th:href="@{/usuarios/perfil/editar/{id}(id=${#authentication.principal.id})}" class="dropdown-item">Mi Perfil</a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form class="d-inline" action="/logout" method="post">
@@ -89,6 +86,11 @@
             </div>
         </div>
     </nav>
+
+    <div class="hero">
+        <h1 class="my-4">Bienvenido a la Plataforma de Cursos</h1>
+        <p>Explora nuestros cursos y mejora tus habilidades.</p>
+    </div>
 
     <h2 class="my-4">Cursos Disponibles</h2>
     <div class="list-group">

@@ -11,16 +11,36 @@
             background: linear-gradient(to right, #007bff, #6f42c1);
             color: white;
         }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        h1, h2 {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
         .btn-primary {
             background-color: #28a745;
             border-color: #28a745;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
         }
         .btn-secondary {
             background-color: #dc3545;
             border-color: #dc3545;
+            transition: background-color 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #c82333;
         }
         .publicacion {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
@@ -30,11 +50,14 @@
             color: #000000;
             font-weight: bold;
         }
+        .publicacion p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1 th:text="${curso.nombre}" style="font-weight: bold;">Nombre del Curso</h1>
+    <h1 th:text="${curso.nombre}">Nombre del Curso</h1>
     <p th:text="${curso.descripcion}">Descripción del Curso</p>
     <p>Precio: <span th:text="${curso.precio}">0.00</span> €</p>
     <a href="/cursos" class="btn btn-primary">Volver a la lista de cursos</a>
@@ -43,7 +66,7 @@
         <a th:href="@{/publicaciones/nueva(cursoId=${curso.id})}" class="btn btn-info mt-3">Añadir Publicación</a>
     </div>
 
-    <h2 class="my-4" style="font-weight: bold;">Publicaciones</h2>
+    <h2 class="my-4">Publicaciones</h2>
     <div th:each="publicacion : ${publicaciones}" class="publicacion">
         <h3 th:text="${publicacion.titulo}">Título de la Publicación</h3>
         <p th:text="${publicacion.descripcion}">Descripción de la Publicación</p>
