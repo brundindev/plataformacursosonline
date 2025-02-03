@@ -40,8 +40,8 @@
 <body>
 <div class="container">
     <h1 class="my-4"style="font-weight: bold;">Lista de Usuarios</h1>
-    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/usuarios/nuevo" class="btn btn-primary mb-3">Añadir Usuario</a>
-    <a href="/home" class="btn btn-primary mb-3">Volver</a>
+    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/usuarios/nuevo}" class="btn btn-primary mb-3">Añadir Usuario</a>
+    <a th:href="@{/home}" class="btn btn-primary mb-3">Volver</a>
     <table class="table table-striped">
         <thead>
             <tr>

@@ -24,6 +24,14 @@ public class Usuario {
     @Column(nullable = false)
     private Rol rol;
 
+    @ManyToMany
+    @JoinTable(
+        name = "usuario_curso",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "curso_id")
+    )
+    private Set<Curso> cursos = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -62,5 +70,13 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
+    }
+
+    public Set<Curso> getCursos() {
+        return cursos;
+    }
+
+    public void setCursos(Set<Curso> cursos) {
+        this.cursos = cursos;
     }
 }

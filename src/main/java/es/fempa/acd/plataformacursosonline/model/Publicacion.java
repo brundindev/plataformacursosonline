@@ -20,6 +20,8 @@ public class Publicacion {
     @Lob
     private byte[] documento;
 
+    private String nombreArchivo;
+
     public Long getId() {
         return id;
     }
@@ -58,5 +60,13 @@ public class Publicacion {
 
     public void setDocumento(byte[] documento) {
         this.documento = documento;
+    }
+
+    public String getNombreArchivo() {
+        return nombreArchivo;
+    }
+
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
     }
 }

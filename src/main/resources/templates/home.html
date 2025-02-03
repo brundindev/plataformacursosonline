@@ -70,12 +70,13 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
+                    <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <span th:text="${#authentication.principal.username}">Usuario</span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a href="/usuarios/perfil" class="dropdown-item">Mi Perfil</a></li>
+                            <li>
+                                <a th:href="@{/usuarios/perfil/editar/{id}(id=${#authentication.principal.id})}" class="dropdown-item">Mi Perfil</a>                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form class="d-inline" action="/logout" method="post">

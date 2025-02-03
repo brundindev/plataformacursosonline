@@ -1,6 +1,9 @@
 package es.fempa.acd.plataformacursosonline.controller;
 
+import es.fempa.acd.plataformacursosonline.model.Publicacion;
 import es.fempa.acd.plataformacursosonline.service.PublicacionService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +45,17 @@ public class PublicacionesController {
         }
         
         return "redirect:/cursos/" + cursoId;
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> descargarPublicacion(@RequestParam Long id) {
+        Publicacion publicacion = publicacionService.buscarPorId(id);
+        if (publicacion == null || publicacion.getDocumento() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + publicacion.getNombreArchivo() + "\"")
+                .body(publicacion.getDocumento());
     }
 }

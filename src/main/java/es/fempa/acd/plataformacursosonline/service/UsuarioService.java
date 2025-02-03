@@ -2,7 +2,9 @@ package es.fempa.acd.plataformacursosonline.service;
 
 import es.fempa.acd.plataformacursosonline.model.Usuario;
 import es.fempa.acd.plataformacursosonline.model.Rol;
+import es.fempa.acd.plataformacursosonline.model.Curso;
 import es.fempa.acd.plataformacursosonline.repository.UsuarioRepository;
+import es.fempa.acd.plataformacursosonline.repository.CursoRepository;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,10 +17,12 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CursoRepository cursoRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, CursoRepository cursoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cursoRepository = cursoRepository;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -54,11 +58,21 @@ public class UsuarioService {
 		
 	}
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public void editarUsuario(Long id, String username, String email, Rol rol) {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    @PreAuthorize("hasRole('ADMIN') || hasRole('PROFESOR') || hasRole('ESTUDIANTE')")
+    public void editarUsuario(Long id, String username, String email, String password, Rol rol) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                
+        if (!usuario.getUsername().equals(username) && existsByUsername(username)) {
+            throw new IllegalArgumentException("El nombre de usuario ya está en uso");
+        }
+        if (!usuario.getEmail().equals(email) && existsByEmail(email)) {
+            throw new IllegalArgumentException("El email ya está en uso");
+        }
+        
         usuario.setUsername(username);
         usuario.setEmail(email);
+        usuario.setPassword(password);
         usuario.setRol(rol);
         usuarioRepository.save(usuario);
     }
@@ -83,5 +97,31 @@ public class UsuarioService {
             throw new IllegalArgumentException("El email ya está en uso");
         }
         return usuarioRepository.save(usuario);
+    }
+
+    public void inscribirUsuarioEnCurso(Long usuarioId, Long cursoId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        Curso curso = cursoRepository.findById(cursoId)
+            .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado"));
+        
+        usuario.getCursos().add(curso);
+        usuarioRepository.save(usuario);
+    }
+
+    public boolean estaInscritoEnCurso(Long usuarioId, Long cursoId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        return usuario.getCursos().stream().anyMatch(curso -> curso.getId().equals(cursoId));
+    }
+
+    public void desinscribirUsuarioDeCurso(Long usuarioId, Long cursoId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        Curso curso = cursoRepository.findById(cursoId)
+            .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado"));
+
+        usuario.getCursos().remove(curso);
+        usuarioRepository.save(usuario);
     }
 }

@@ -1,15 +1,20 @@
 package es.fempa.acd.plataformacursosonline.controller;
 
 import es.fempa.acd.plataformacursosonline.model.Curso;
+import es.fempa.acd.plataformacursosonline.model.Rol;
+import es.fempa.acd.plataformacursosonline.model.Usuario;
 import es.fempa.acd.plataformacursosonline.service.CursoService;
 import es.fempa.acd.plataformacursosonline.service.PublicacionService;
+import es.fempa.acd.plataformacursosonline.service.UsuarioService;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/cursos")
@@ -17,16 +22,25 @@ public class CursosController {
 
     private final CursoService cursoService;
     private final PublicacionService publicacionService;
+    private final UsuarioService usuarioService;
 
-    public CursosController(CursoService cursoService, PublicacionService publicacionService) {
+    public CursosController(CursoService cursoService, PublicacionService publicacionService, UsuarioService usuarioService) {
         this.cursoService = cursoService;
         this.publicacionService = publicacionService;
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping
-    public String listarCursos(Model model) {
+    public String listarCursos(Model model, Principal principal) {
         List<Curso> cursos = cursoService.listarCursos();
         model.addAttribute("cursos", cursos);
+        
+        Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        
+        model.addAttribute("inscripciones", cursos.stream()
+            .collect(Collectors.toMap(Curso::getId, curso -> usuarioService.estaInscritoEnCurso(usuario.getId(), curso.getId()))));
+        
         return "cursos/lista";
     }
 
@@ -74,8 +88,16 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public String verCurso(@PathVariable Long id, Model model) {
+    public String verCurso(@PathVariable Long id, Model model, Principal principal) {
+        Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        if (!usuario.getRol().equals(Rol.ADMIN) && !usuarioService.estaInscritoEnCurso(usuario.getId(), id)) {
+            return "error";
+        }
+
         Curso curso = cursoService.buscarPorId(id);
         if (curso == null) {
             return "error";
@@ -83,5 +105,25 @@ public class CursosController {
         model.addAttribute("curso", curso);
         model.addAttribute("publicaciones", publicacionService.listarPublicacionesPorCurso(id));
         return "cursos/ver";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/unirse")
+    public String unirseCurso(@PathVariable Long id, Principal principal) {
+        Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        
+        usuarioService.inscribirUsuarioEnCurso(usuario.getId(), id);
+        return "redirect:/cursos";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/desapuntarse")
+    public String desapuntarseCurso(@PathVariable Long id, Principal principal) {
+        Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        usuarioService.desinscribirUsuarioDeCurso(usuario.getId(), id);
+        return "redirect:/cursos";
     }
 }

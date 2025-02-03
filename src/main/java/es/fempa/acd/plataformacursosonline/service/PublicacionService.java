@@ -30,6 +30,7 @@ public class PublicacionService {
         try {
             byte[] contenido = documento.getBytes();
             publicacion.setDocumento(contenido);
+            publicacion.setNombreArchivo(documento.getOriginalFilename());
         } catch (IOException e) {
             throw new RuntimeException("Error al procesar el archivo", e);
         }
@@ -39,5 +40,9 @@ public class PublicacionService {
 
     public List<Publicacion> listarPublicacionesPorCurso(Long cursoId) {
         return publicacionRepository.findByCursoId(cursoId);
+    }
+
+    public Publicacion buscarPorId(Long id) {
+        return publicacionRepository.findById(id).orElse(null);
     }
 }

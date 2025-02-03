@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Lista de Cursos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <style>
         body {
             background: linear-gradient(to right, #007bff, #6f42c1);
@@ -35,6 +36,15 @@
         .table-striped tbody tr:nth-of-type(odd) {
             background-color: rgba(255, 255, 255, 0.05);
         }
+        .input-group input {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+        }
+
+        .input-group button {
+            background-color: #007bff;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -42,7 +52,13 @@
     <h1 class="my-4" style="font-weight: bold;">Lista de Cursos</h1>
     <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary mb-3">Añadir Curso</a>
     <a href="/home" class="btn btn-primary mb-3">Volver</a>
-    <table class="table table-striped">
+    <div class="input-group mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar cursos...">
+        <button class="btn btn-outline-secondary" type="button" title="Buscar">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
+    <table class="table table-striped" id="coursesTable">
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -52,7 +68,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="curso : ${cursos}">
+            <tr th:each="curso : ${cursos}" class="course-row">
                 <td th:text="${curso.nombre}" style="font-weight: bold;">Nombre</td>
                 <td th:text="${curso.descripcion}">Descripción</td>
                 <td th:text="${curso.precio}">0.00</td>
@@ -62,11 +78,32 @@
                     <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{/cursos/{id}/eliminar(id=${curso.id})}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                     </form>
+                    <form th:if="${inscripciones[curso.id]}" th:action="@{/cursos/{id}/desapuntarse(id=${curso.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Desapuntarse</button>
+                    </form>
+                    <form th:if="${!inscripciones[curso.id]}" th:action="@{/cursos/{id}/unirse(id=${curso.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-success btn-sm">Unirse</button>
+                    </form>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.course-row');
+
+        rows.forEach(row => {
+            const courseName = row.querySelector('td').textContent.toLowerCase();
+            if (courseName.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
 </body>
 </html>

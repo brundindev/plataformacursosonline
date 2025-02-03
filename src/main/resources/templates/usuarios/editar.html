@@ -24,7 +24,7 @@
         <div class="container">
             <h1 class="my-4">Editar Usuario</h1>
             <form th:action="@{/usuarios/{id}/editar(id=${usuario.id})}" method="post">
-                <div class="mb-3">
+               <div class="mb-3">
                     <label for="username" class="form-label">Nombre de Usuario</label>
                     <input type="text" id="username" name="username" class="form-control" th:value="${usuario.username}" required>
                 </div>

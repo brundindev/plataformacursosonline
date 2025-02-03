@@ -2,7 +2,10 @@ package es.fempa.acd.plataformacursosonline.controller;
 
 import es.fempa.acd.plataformacursosonline.model.Rol;
 import es.fempa.acd.plataformacursosonline.model.Usuario;
+import es.fempa.acd.plataformacursosonline.service.CustomUserDetailsService;
+import es.fempa.acd.plataformacursosonline.service.CustomUserDetailsService.CustomUserDetails;
 import es.fempa.acd.plataformacursosonline.service.UsuarioService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,9 +21,11 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, CustomUserDetailsService customUserDetailsService) {
         this.usuarioService = usuarioService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
@@ -55,7 +60,7 @@ public class UsuarioController {
         return "redirect:/usuarios";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('ESTUDIANTE')")
     @GetMapping("/{id}/editar")
     public String mostrarFormularioEditarUsuario(@PathVariable Long id, Model model) {
         Usuario usuario = usuarioService.buscarPorId(id);
@@ -67,39 +72,76 @@ public class UsuarioController {
         return "usuarios/editar";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('ESTUDIANTE')")
     @PostMapping("/{id}/editar")
     public String editarUsuario(@PathVariable Long id,
-                                 @RequestParam String username,
-                                 @RequestParam String email,
-                                 @RequestParam Rol rol) {
-        usuarioService.editarUsuario(id, username, email, rol);
+                           Principal principal,
+                           @RequestParam String username,
+                           @RequestParam String email,
+                           @RequestParam(required = false) String password,
+                           @RequestParam Rol rol) {
+        
+        CustomUserDetails userDetails = (CustomUserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                
+        if (!isAdmin && !userDetails.getId().equals(id)) {
+            throw new AccessDeniedException("No tienes permiso para editar este perfil");
+        }
+
+        if (password != null && !password.isEmpty()) {
+            usuarioService.editarUsuario(id, username, email, password, rol);
+        } else {
+            Usuario usuario = usuarioService.buscarPorId(id);
+            usuarioService.editarUsuario(id, username, email, usuario.getPassword(), rol);
+        }
+        
         return "redirect:/usuarios";
     }
 
-    @GetMapping("/perfil")
-    @PreAuthorize("isAuthenticated()")
-        public String mostrarPerfil(Model model, Principal principal) {
-        Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
-            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('ESTUDIANTE')")
+    @GetMapping("/perfil/editar/{id}")
+    public String mostrarFormularioEditarPerfil(@PathVariable Long id, Model model) {
+        Usuario usuario = usuarioService.buscarPorId(id);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
         model.addAttribute("usuario", usuario);
         return "/usuarios/perfil";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/perfil/editar")
-    public String editarPerfil(Principal principal,
-                              @RequestParam String username,
-                              @RequestParam String email) {
-        Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
-            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-        
-        usuarioService.editarUsuario(usuario.getId(), username, email, usuario.getRol());
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('ESTUDIANTE')")
+    @PostMapping("/perfil/editar/{id}")
+    public String editarPerfil(@PathVariable Long id,
+                               Principal principal,
+                               @RequestParam String username,
+                               @RequestParam String email,
+                               @RequestParam String password) {
+        CustomUserDetails userDetails = (CustomUserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        Long userId = userDetails.getId();
+
+        if (!userId.equals(id)) {
+            throw new AccessDeniedException("No tienes permiso para editar este perfil");
+        }
+
+        Usuario usuario = usuarioService.buscarPorId(userId);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        usuarioService.editarUsuario(userId, username, email, password, usuario.getRol());
+
+        Usuario usuarioActualizado = usuarioService.buscarPorId(userId);
+        CustomUserDetails newUserDetails = new CustomUserDetails(usuarioActualizado);
         
         SecurityContextHolder.getContext().setAuthentication(
-            new UsernamePasswordAuthenticationToken(usuarioService.buscarPorUsername(username).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado")), null, usuario.getRol().getAuthorities())
+            new UsernamePasswordAuthenticationToken(
+                newUserDetails, 
+                null, 
+                newUserDetails.getAuthorities()
+            )
         );
-        
+
         return "redirect:/home";
     }
 
