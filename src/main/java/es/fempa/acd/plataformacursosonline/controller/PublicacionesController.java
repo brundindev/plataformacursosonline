@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
 @RequestMapping("/publicaciones")
@@ -57,5 +59,30 @@ public class PublicacionesController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + publicacion.getNombreArchivo() + "\"")
                 .body(publicacion.getDocumento());
+    }
+
+    @GetMapping("/editar/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    public String mostrarFormularioEditarPublicacion(@PathVariable Long id, Model model) {
+        Publicacion publicacion = publicacionService.buscarPorId(id);
+        if (publicacion == null) {
+            return "error";
+        }
+        model.addAttribute("publicacion", publicacion);
+        return "publicaciones/editar";
+    }
+
+    @PostMapping("/{id}/editar")
+    public String editarPublicacion(@PathVariable Long id,
+                                 @RequestParam String titulo,
+                                 @RequestParam String descripcion,
+                                 @RequestParam(required = false) MultipartFile documento) {
+        try {
+            publicacionService.editarPublicacion(id, titulo, descripcion, documento);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+        return "redirect:/cursos/" + publicacionService.buscarPorId(id).getCursoId();
     }
 }

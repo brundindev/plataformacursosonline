@@ -73,6 +73,7 @@
         <p>
             <span th:text="'Archivo: ' + ${publicacion.nombreArchivo}"></span>
             <a th:href="@{/publicaciones/download(id=${publicacion.id})}" class="btn btn-secondary">Descargar</a>
+            <a th:href="@{/publicaciones/editar/{id}(id=${publicacion.id})}" class="btn btn-warning">Editar</a>
         </p>
     </div>
 </div>

@@ -45,4 +45,28 @@ public class PublicacionService {
     public Publicacion buscarPorId(Long id) {
         return publicacionRepository.findById(id).orElse(null);
     }
+
+    public void editarPublicacion(Long id, String titulo, String descripcion, MultipartFile documento) {
+        Publicacion publicacion = buscarPorId(id);
+        if (publicacion == null) {
+            throw new IllegalArgumentException("Publicación no encontrada");
+        }
+        publicacion.setTitulo(titulo);
+        publicacion.setDescripcion(descripcion);
+        
+        if (documento != null && !documento.isEmpty()) {
+            if (documento.getSize() > 1_000_000) {
+                throw new IllegalArgumentException("El tamaño del archivo no debe exceder 1MB");
+            }
+            try {
+                byte[] contenido = documento.getBytes();
+                publicacion.setDocumento(contenido);
+                publicacion.setNombreArchivo(documento.getOriginalFilename());
+            } catch (IOException e) {
+                throw new RuntimeException("Error al procesar el archivo", e);
+            }
+        }
+        
+        publicacionRepository.save(publicacion);
+    }
 }
