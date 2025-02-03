@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -55,7 +56,12 @@ public class UsuarioController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/eliminar")
-    public String eliminarUsuario(@PathVariable Long id) {
+    public String eliminarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Usuario usuario = usuarioService.buscarPorId(id);
+        if (usuario != null && usuario.getRol() == Rol.ADMIN) {
+            redirectAttributes.addFlashAttribute("errorMessage", "No se puede eliminar a un usuario administrador.");
+            return "redirect:/usuarios";
+        }
         usuarioService.eliminarUsuario(id);
         return "redirect:/usuarios";
     }
