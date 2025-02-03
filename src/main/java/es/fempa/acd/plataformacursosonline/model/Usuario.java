@@ -3,25 +3,32 @@ package es.fempa.acd.plataformacursosonline.model;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
+@Schema(description = "Entidad que representa un usuario en el sistema")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único del usuario", example = "1")
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Schema(description = "Nombre de usuario único", example = "john_doe")
     private String username;
 
     @Column(nullable = false)
+    @Schema(description = "Contraseña encriptada del usuario")
     private String password;
 
     @Column(nullable = false, unique = true)
+    @Schema(description = "Correo electrónico del usuario", example = "john@example.com")
     private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Schema(description = "Rol del usuario en el sistema", example = "ADMIN")
     private Rol rol;
 
     @ManyToMany

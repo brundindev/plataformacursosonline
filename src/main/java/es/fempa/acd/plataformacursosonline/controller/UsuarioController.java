@@ -13,10 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.security.Principal;
 import java.util.List;
 
+@Tag(name = "Usuarios", description = "API para la gestión de usuarios")
 @Controller
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -29,7 +33,8 @@ public class UsuarioController {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR')")
+    @Operation(summary = "Listar todos los usuarios")
+    @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida correctamente")
     @GetMapping
     public String listarUsuarios(Model model) {
         List<Usuario> usuarios = usuarioService.listarUsuarios();
@@ -37,8 +42,10 @@ public class UsuarioController {
         return "usuarios/lista";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Mostrar formulario de nuevo usuario")
+    @ApiResponse(responseCode = "200", description = "Formulario mostrado correctamente")
     @GetMapping("/nuevo")
+    @PreAuthorize("hasRole('ADMIN')")
     public String formularioNuevoUsuario(Model model) {
         model.addAttribute("roles", Rol.values());
         return "usuarios/nuevo";

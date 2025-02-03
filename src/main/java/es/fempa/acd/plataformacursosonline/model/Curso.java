@@ -4,16 +4,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
+@Schema(description = "Entidad que representa un curso")
 public class Curso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único del curso", example = "1")
     private Long id;
 
+    @Schema(description = "Nombre del curso", example = "Programación Java")
     private String nombre;
+
+    @Schema(description = "Descripción del curso", example = "Curso completo de Java")
     private String descripcion;
-    private double precio;
+
+    @Schema(description = "Precio del curso", example = "99.99")
+    private Double precio;
 
     public Curso(){
         

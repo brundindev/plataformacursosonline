@@ -16,6 +16,12 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Cursos", description = "API para gestionar cursos")
 @Controller
 @RequestMapping("/cursos")
 public class CursosController {
@@ -30,6 +36,8 @@ public class CursosController {
         this.usuarioService = usuarioService;
     }
 
+    @Operation(summary = "Obtener todos los cursos")
+    @ApiResponse(responseCode = "200", description = "Lista de cursos encontrada")
     @GetMapping
     public String listarCursos(Model model, Principal principal) {
         List<Curso> cursos = cursoService.listarCursos();
@@ -44,12 +52,19 @@ public class CursosController {
         return "cursos/lista";
     }
 
+    @Operation(summary = "Mostrar formulario de nuevo curso")
+    @ApiResponse(responseCode = "200", description = "Formulario mostrado correctamente")
     @GetMapping("/nuevo")
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioNuevoCurso() {
         return "cursos/nuevo";
     }
 
+    @Operation(summary = "Crear nuevo curso")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Curso creado correctamente"),
+        @ApiResponse(responseCode = "400", description = "Datos del curso inválidos")
+    })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public String crearCurso(@RequestParam String nombre,
@@ -59,6 +74,12 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
+    @Operation(summary = "Mostrar formulario de edición de curso")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Formulario mostrado correctamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    })
     @GetMapping("/{id}/editar")
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioEditarCurso(@PathVariable Long id, Model model) {
@@ -67,6 +88,12 @@ public class CursosController {
         return "cursos/editar";
     }
 
+    @Operation(summary = "Editar curso existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Curso actualizado correctamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    })
     @PostMapping("/{id}/editar")
     @PreAuthorize("hasRole('ADMIN')")
     public String editarCurso(@PathVariable Long id,
@@ -81,6 +108,12 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
+    @Operation(summary = "Eliminar curso")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Curso eliminado correctamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    })
     @PostMapping("/{id}/eliminar")
     @PreAuthorize("hasRole('ADMIN')")
     public String eliminarCurso(@PathVariable Long id) {
@@ -88,8 +121,14 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Ver detalles de un curso")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Detalles del curso mostrados correctamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    })
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public String verCurso(@PathVariable Long id, Model model, Principal principal) {
         Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
@@ -107,8 +146,14 @@ public class CursosController {
         return "cursos/ver";
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Unirse a un curso")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario inscrito correctamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    })
     @PostMapping("/{id}/unirse")
+    @PreAuthorize("isAuthenticated()")
     public String unirseCurso(@PathVariable Long id, Principal principal) {
         Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));

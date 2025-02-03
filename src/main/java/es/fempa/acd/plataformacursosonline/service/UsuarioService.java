@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import io.swagger.v3.oas.annotations.Operation;
 
 @Service
 public class UsuarioService {
@@ -48,6 +49,7 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    @Operation(summary = "Buscar usuario por nombre de usuario")
     public Optional<Usuario> buscarPorUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }
@@ -109,6 +111,7 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    @Operation(summary = "Verificar si un usuario está inscrito en un curso")
     public boolean estaInscritoEnCurso(Long usuarioId, Long cursoId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));

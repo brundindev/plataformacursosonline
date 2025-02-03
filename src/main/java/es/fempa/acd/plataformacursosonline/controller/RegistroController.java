@@ -8,7 +8,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@Tag(name = "Registro", description = "API para el registro de usuarios")
 @Controller
 @RequestMapping("/registro")
 public class RegistroController {
@@ -19,12 +24,19 @@ public class RegistroController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Operation(summary = "Mostrar formulario de registro")
+    @ApiResponse(responseCode = "200", description = "Formulario mostrado correctamente")
     @GetMapping
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("roles", Rol.values());
         return "register";
     }
 
+    @Operation(summary = "Registrar nuevo usuario")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario registrado correctamente"),
+        @ApiResponse(responseCode = "400", description = "Datos de registro inválidos")
+    })
     @PostMapping
     public String registrarUsuario(@RequestParam String username,
                                    @RequestParam String password,
