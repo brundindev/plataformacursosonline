@@ -45,7 +45,7 @@
 
 ## Cómo usar
 
-Para clonar y ejecutar esta aplicación, necesitas [Springboot](https://spring.io/projects/spring-boot ) y [MySQL](https://www.mysql.com/downloads) instalados en tu computadora. Desde tu línea de comandos:
+Para clonar y ejecutar esta aplicación, necesitas [Springboot](https://spring.io/projects/spring-boot ) y [H2 Database](https://www.h2database.com/html/main.html) instalados en tu computadora. Desde tu línea de comandos:
 
 ```bash
 # Clona este repositorio
@@ -74,7 +74,7 @@ Esta aplicación utiliza los siguientes paquetes de código abierto:
 - [Springboot](https://spring.io/projects/spring-boot )
 - [Java](https://www.java.com/es/)
 - [Thymeleaf](https://www.thymeleaf.org)
-- [MySQL](https://www.mysql.com)
+- [H2 Database](https://www.h2database.com/html/main.html)
 - [Maven](https://maven.apache.org)
 
 ## Licencia
