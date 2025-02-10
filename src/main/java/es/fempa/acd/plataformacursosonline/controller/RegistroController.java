@@ -1,19 +1,27 @@
 package es.fempa.acd.plataformacursosonline.controller;
 
-import es.fempa.acd.plataformacursosonline.model.Rol;
-import es.fempa.acd.plataformacursosonline.model.Usuario;
-import es.fempa.acd.plataformacursosonline.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.fempa.acd.plataformacursosonline.model.Rol;
+import es.fempa.acd.plataformacursosonline.model.Usuario;
+import es.fempa.acd.plataformacursosonline.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+/**
+ * Controlador para gestionar el registro de nuevos usuarios.
+ * Maneja el proceso de registro y validación de nuevos usuarios en el sistema.
+ */
 @Tag(name = "Registro", description = "API para el registro de usuarios")
 @Controller
 @RequestMapping("/registro")
@@ -25,6 +33,11 @@ public class RegistroController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Muestra el formulario de registro
+     * @param model Modelo para pasar datos a la vista
+     * @return Vista del formulario de registro
+     */
     @Operation(summary = "Mostrar formulario de registro")
     @ApiResponse(responseCode = "200", description = "Formulario mostrado correctamente")
     @GetMapping

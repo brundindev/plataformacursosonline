@@ -1,24 +1,36 @@
 package es.fempa.acd.plataformacursosonline.service;
 
-import es.fempa.acd.plataformacursosonline.model.Usuario;
-import es.fempa.acd.plataformacursosonline.repository.UsuarioRepository;
+import java.util.Collection;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import es.fempa.acd.plataformacursosonline.model.Usuario;
+import es.fempa.acd.plataformacursosonline.repository.UsuarioRepository;
 
+/**
+ * Servicio personalizado para la gestión de detalles de usuarios.
+ * Implementa la interfaz UserDetailsService de Spring Security.
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
 
+    /**
+     * Constructor del servicio.
+     */
     public CustomUserDetailsService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 
+    /**
+     * Carga los detalles de un usuario por su nombre de usuario.
+     * Método requerido por UserDetailsService.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByUsername(username)
@@ -27,6 +39,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new CustomUserDetails(usuario);
     }
 
+    /**
+     * Busca un usuario por su ID.
+     */
     public Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id).orElse(null);
     }

@@ -1,26 +1,33 @@
 package es.fempa.acd.plataformacursosonline.controller;
 
+import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import es.fempa.acd.plataformacursosonline.model.Curso;
 import es.fempa.acd.plataformacursosonline.model.Rol;
 import es.fempa.acd.plataformacursosonline.model.Usuario;
 import es.fempa.acd.plataformacursosonline.service.CursoService;
 import es.fempa.acd.plataformacursosonline.service.PublicacionService;
 import es.fempa.acd.plataformacursosonline.service.UsuarioService;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+/**
+ * Controlador para la gestión de cursos.
+ * Maneja todas las operaciones relacionadas con cursos incluyendo listado, creación y edición.
+ */
 @Tag(name = "Cursos", description = "API para gestionar cursos")
 @Controller
 @RequestMapping("/cursos")
@@ -30,6 +37,9 @@ public class CursosController {
     private final PublicacionService publicacionService;
     private final UsuarioService usuarioService;
 
+    /**
+     * Constructor que inyecta los servicios necesarios
+     */
     public CursosController(CursoService cursoService, PublicacionService publicacionService, UsuarioService usuarioService) {
         this.cursoService = cursoService;
         this.publicacionService = publicacionService;

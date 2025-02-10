@@ -1,18 +1,23 @@
 package es.fempa.acd.plataformacursosonline.service;
 
-import es.fempa.acd.plataformacursosonline.model.Usuario;
-import es.fempa.acd.plataformacursosonline.model.Rol;
-import es.fempa.acd.plataformacursosonline.model.Curso;
-import es.fempa.acd.plataformacursosonline.repository.UsuarioRepository;
-import es.fempa.acd.plataformacursosonline.repository.CursoRepository;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
+
+import es.fempa.acd.plataformacursosonline.model.Curso;
+import es.fempa.acd.plataformacursosonline.model.Rol;
+import es.fempa.acd.plataformacursosonline.model.Usuario;
+import es.fempa.acd.plataformacursosonline.repository.CursoRepository;
+import es.fempa.acd.plataformacursosonline.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 
+/**
+ * Servicio que gestiona todas las operaciones relacionadas con usuarios.
+ * Maneja la lógica de negocio para crear, modificar y gestionar usuarios.
+ */
 @Service
 public class UsuarioService {
 
@@ -20,12 +25,19 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final CursoRepository cursoRepository;
 
+    /**
+     * Constructor que inyecta las dependencias necesarias
+     */
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, CursoRepository cursoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.cursoRepository = cursoRepository;
     }
 
+    /**
+     * Crea un nuevo usuario en el sistema
+     * @throws IllegalArgumentException si el username o email ya existen
+     */
     @PreAuthorize("hasRole('ADMIN')")
     public Usuario crearUsuario(String username, String password, String email, Rol rol) {
         if (usuarioRepository.existsByUsername(username)) {
