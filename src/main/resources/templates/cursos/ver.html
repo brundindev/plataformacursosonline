@@ -107,20 +107,23 @@
     </style>
 </head>
 <body>
-    <div class="toggle-switch">
-        <label class="switch-label">
-            <input type="checkbox" class="checkbox" id="daltonicModeToggle">
-            <span class="slider"></span>
-        </label>
-    </div>
+
 <div class="container">
-    <h1 th:text="${curso.nombre}">Nombre del Curso</h1>
+    <div class="d-flex align-items-center justify-content-between">
+        <h1 class="my-4" th:text="${curso.nombre}">Nombre del Curso</h1>
+        <div class="toggle-switch">
+            <label class="switch-label">
+                <input type="checkbox" class="checkbox" id="daltonicModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
     <p th:text="${curso.descripcion}">Descripción del Curso</p>
     <p>Precio: <span th:text="${curso.precio}">0.00</span> €</p>
     <a href="/cursos" class="btn btn-primary">Volver a la lista de cursos</a>
     
-    <div th:if="${#authorization.expression('hasRole(''PROFESOR'') or hasRole(''ADMIN'')')}">
-        <a th:href="@{/publicaciones/nueva(cursoId=${curso.id})}" class="btn btn-info mt-3">Añadir Publicación</a>
+    <div th:if="${#authorization.expression('hasRole(''PROFESOR'') or hasRole(''ADMIN'')')}" class="d-flex align-items-center mt-3">
+        <a th:href="@{/publicaciones/nueva(cursoId=${curso.id})}" class="btn btn-info me-2">Añadir Publicación</a>
     </div>
 
     <h2 class="my-4">Publicaciones</h2>

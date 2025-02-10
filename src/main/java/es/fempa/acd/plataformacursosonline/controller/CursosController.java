@@ -25,14 +25,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * Controlador para la gestión de cursos.
- * Maneja todas las operaciones relacionadas con cursos incluyendo listado, creación y edición.
+ * Controlador para la gestión de cursos en la plataforma.
+ * Proporciona endpoints para listar, crear, editar, eliminar y gestionar inscripciones en cursos.
  */
 @Tag(name = "Cursos", description = "API para gestionar cursos")
 @Controller
 @RequestMapping("/cursos")
 public class CursosController {
 
+    // Servicios necesarios para la lógica de negocio
     private final CursoService cursoService;
     private final PublicacionService publicacionService;
     private final UsuarioService usuarioService;
@@ -46,6 +47,12 @@ public class CursosController {
         this.usuarioService = usuarioService;
     }
 
+    /**
+     * Lista todos los cursos disponibles y marca si el usuario actual está inscrito en cada uno.
+     * @param model Modelo para pasar datos a la vista
+     * @param principal Usuario autenticado actual
+     * @return Vista de lista de cursos
+     */
     @Operation(summary = "Obtener todos los cursos")
     @ApiResponse(responseCode = "200", description = "Lista de cursos encontrada")
     @GetMapping
@@ -62,6 +69,10 @@ public class CursosController {
         return "cursos/lista";
     }
 
+    /**
+     * Muestra el formulario para crear un nuevo curso.
+     * Solo accesible para administradores.
+     */
     @Operation(summary = "Mostrar formulario de nuevo curso")
     @ApiResponse(responseCode = "200", description = "Formulario mostrado correctamente")
     @GetMapping("/nuevo")
@@ -70,6 +81,13 @@ public class CursosController {
         return "cursos/nuevo";
     }
 
+    /**
+     * Procesa la creación de un nuevo curso.
+     * Solo accesible para administradores.
+     * @param nombre Nombre del curso
+     * @param descripcion Descripción del curso
+     * @param precio Precio del curso
+     */
     @Operation(summary = "Crear nuevo curso")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Curso creado correctamente"),
@@ -84,6 +102,11 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
+    /**
+     * Muestra el formulario para editar un curso existente.
+     * Solo accesible para administradores.
+     * @param id ID del curso a editar
+     */
     @Operation(summary = "Mostrar formulario de edición de curso")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Formulario mostrado correctamente"),
@@ -98,6 +121,10 @@ public class CursosController {
         return "cursos/editar";
     }
 
+    /**
+     * Procesa la actualización de un curso existente.
+     * Solo accesible para administradores.
+     */
     @Operation(summary = "Editar curso existente")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Curso actualizado correctamente"),
@@ -118,6 +145,11 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
+    /**
+     * Elimina un curso específico.
+     * Solo accesible para administradores.
+     * @param id ID del curso a eliminar
+     */
     @Operation(summary = "Eliminar curso")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Curso eliminado correctamente"),
@@ -131,6 +163,12 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
+    /**
+     * Muestra los detalles de un curso específico.
+     * Solo accesible para usuarios inscritos o administradores.
+     * @param id ID del curso a visualizar
+     * @param principal Usuario autenticado actual
+     */
     @Operation(summary = "Ver detalles de un curso")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Detalles del curso mostrados correctamente"),
@@ -156,6 +194,11 @@ public class CursosController {
         return "cursos/ver";
     }
 
+    /**
+     * Procesa la inscripción de un usuario en un curso.
+     * @param id ID del curso
+     * @param principal Usuario que se inscribe
+     */
     @Operation(summary = "Unirse a un curso")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Usuario inscrito correctamente"),
@@ -172,6 +215,11 @@ public class CursosController {
         return "redirect:/cursos";
     }
 
+    /**
+     * Procesa la desinscripción de un usuario de un curso.
+     * @param id ID del curso
+     * @param principal Usuario que se desapunta
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/desapuntarse")
     public String desapuntarseCurso(@PathVariable Long id, Principal principal) {

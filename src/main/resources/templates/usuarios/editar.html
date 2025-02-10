@@ -105,14 +105,16 @@
         </style>
     </head>
     <body>
-        <div class="toggle-switch">
-            <label class="switch-label">
-                <input type="checkbox" class="checkbox" id="daltonicModeToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
         <div class="container">
-            <h1 class="mb-4">Editar Usuario</h1>
+            <div class="d-flex align-items-center justify-content-between">
+                <h1 class="my-4">Editar Usuario</h1>
+                <div class="toggle-switch">
+                    <label class="switch-label">
+                        <input type="checkbox" class="checkbox" id="daltonicModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
             <form th:action="@{/usuarios/{id}/editar(id=${usuario.id})}" method="post">
                 <div class="mb-3">
                     <label for="username" class="form-label">Nombre de Usuario</label>

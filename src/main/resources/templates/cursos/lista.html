@@ -26,7 +26,7 @@
             border-color: #dc3545;
         }
         .table {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -35,13 +35,10 @@
         }
         .table th {
             background-color: rgba(255, 255, 255, 0.2);
-            color: rgb(0, 0, 0) !important;
-            font-weight: bold;
         }
         .table-striped tbody tr:nth-of-type(odd) {
             background-color: rgba(255, 255, 255, 0.05);
         }
-        /* Estilos para el modo daltónico */
         body.daltonic-mode {
             background: linear-gradient(to right, #000000, #1a1a1a) !important;
             color: #ffffff !important;
@@ -51,6 +48,7 @@
         }
         .daltonic-mode .table th {
             background-color: rgba(255, 255, 255, 0.1) !important;
+            color: #ffffff !important;
         }
         .daltonic-mode .table-striped tbody tr:nth-of-type(odd) {
             background-color: rgba(255, 255, 255, 0.02) !important;
@@ -117,16 +115,18 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="my-4" style="font-weight: bold;">Lista de Cursos</h1>
-        <div class="d-flex align-items-center mb-3">
-            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary">Añadir Curso</a>
-            <a href="/home" class="btn btn-primary ms-2">Volver</a>
-            <div class="toggle-switch ms-2">
+        <div class="d-flex align-items-center justify-content-between">
+            <h1 class="my-4" style="font-weight: bold;">Lista de Cursos</h1>
+            <div class="toggle-switch">
                 <label class="switch-label">
                     <input type="checkbox" class="checkbox" id="daltonicModeToggle">
                     <span class="slider"></span>
                 </label>
             </div>
+        </div>
+        <div class="d-flex align-items-center mb-3">
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary">Añadir Curso</a>
+            <a href="/home" class="btn btn-primary ms-2">Volver</a>
         </div>
         <div class="input-group mb-3">
             <input type="text" id="searchInput" class="form-control" placeholder="Buscar cursos...">
