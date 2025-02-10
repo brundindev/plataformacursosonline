@@ -13,6 +13,9 @@
         }
         .container {
             margin-top: 50px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
         }
         .btn-primary {
             background-color: #28a745;
@@ -27,66 +30,41 @@
             border-radius: 10px;
             overflow: hidden;
         }
-        .table th {
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white !important;
-            font-weight: bold;
-        }
-        .table td {
-            color: #000000 !important;
+        .table th, .table td {
             vertical-align: middle;
         }
+        .table th {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: rgb(0, 0, 0) !important;
+            font-weight: bold;
+        }
         .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.05);
         }
-        .table-striped tbody tr:nth-of-type(even) {
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-
         /* Estilos para el modo daltónico */
         body.daltonic-mode {
             background: linear-gradient(to right, #000000, #1a1a1a) !important;
             color: #ffffff !important;
         }
-
         .daltonic-mode .table {
-            background-color: rgba(255, 255, 255, 0.8) !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
         }
         .daltonic-mode .table th {
-            background-color: #000000 !important;
-            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
         }
-        .daltonic-mode .table td {
-            color: #000000 !important;
+        .daltonic-mode .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.02) !important;
         }
-
-        .daltonic-mode .btn-primary,
-        .daltonic-mode .btn-secondary,
-        .daltonic-mode .btn-info,
-        .daltonic-mode .btn-warning,
-        .daltonic-mode .btn-danger,
-        .daltonic-mode .btn-outline-secondary {
+        .daltonic-mode .btn-primary {
             background-color: #ffffff !important;
             border-color: #ffffff !important;
             color: #000000 !important;
         }
-
-        .daltonic-mode .btn-outline-secondary:hover {
-            background-color: #cccccc !important;
-            border-color: #cccccc !important;
-        }
-
-        .daltonic-mode .input-group .form-control {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: #ffffff !important;
+        .daltonic-mode .alert-danger {
+            background-color: #ffffff !important;
             border-color: #ffffff !important;
+            color: #000000 !important;
         }
-
-        .daltonic-mode .input-group .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.7) !important;
-        }
-
-        /* Estilos del toggle switch */
         .toggle-switch {
             position: relative;
             width: 50px;
@@ -139,15 +117,17 @@
 </head>
 <body>
     <div class="container">
-        <div class="toggle-switch">
-            <label class="switch-label">
-                <input type="checkbox" class="checkbox" id="daltonicModeToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
         <h1 class="my-4" style="font-weight: bold;">Lista de Cursos</h1>
-        <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary mb-3">Añadir Curso</a>
-        <a href="/home" class="btn btn-primary mb-3">Volver</a>
+        <div class="d-flex align-items-center mb-3">
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary">Añadir Curso</a>
+            <a href="/home" class="btn btn-primary ms-2">Volver</a>
+            <div class="toggle-switch ms-2">
+                <label class="switch-label">
+                    <input type="checkbox" class="checkbox" id="daltonicModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
         <div class="input-group mb-3">
             <input type="text" id="searchInput" class="form-control" placeholder="Buscar cursos...">
             <button class="btn btn-outline-secondary" type="button" title="Buscar">
