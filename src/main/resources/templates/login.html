@@ -34,6 +34,12 @@
 <body>
 <div class="login-container">
     <h2 class="login-title colorTexto">Iniciar Sesión</h2>
+    <div th:if="${errorMessage}" class="alert alert-danger" id="errorPopup">
+        <span th:text="${errorMessage}"></span>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" id="successPopup">
+        <span th:text="${successMessage}"></span>
+    </div>
     <form th:action="@{/login}" method="post">
         <div class="mb-3">
             <label for="username" class="form-label colorTexto">Nombre de Usuario</label>

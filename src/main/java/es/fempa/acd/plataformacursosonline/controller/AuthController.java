@@ -1,5 +1,6 @@
 package es.fempa.acd.plataformacursosonline.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -7,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import es.fempa.acd.plataformacursosonline.service.CustomUserDetailsService.CustomUserDetails;
+import es.fempa.acd.plataformacursosonline.service.UsuarioService;
 
 import java.security.Principal;
 
@@ -19,10 +21,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Controller
 public class AuthController {
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @Operation(summary = "Mostrar página de login")
     @ApiResponse(responseCode = "200", description = "Página de login mostrada correctamente")
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(Model model, String error) {
+        if (error != null) {
+            if (!usuarioService.existsByUsername(error)) {
+                model.addAttribute("errorMessage", "El usuario no existe");
+            } else {
+                model.addAttribute("errorMessage", "Contraseña incorrecta");
+            }
+        }
         return "login";
     }
 

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Tag(name = "Registro", description = "API para el registro de usuarios")
 @Controller
@@ -41,21 +42,34 @@ public class RegistroController {
     public String registrarUsuario(@RequestParam String username,
                                    @RequestParam String password,
                                    @RequestParam String email,
-                                   @RequestParam Rol rol) {
-        if (usuarioService.existsByUsername(username)) {
-            throw new IllegalArgumentException("El nombre de usuario ya está en uso");
-        }
-        if (usuarioService.existsByEmail(email)) {
-            throw new IllegalArgumentException("El email ya está en uso");
-        }
+                                   @RequestParam Rol rol,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            if (usuarioService.existsByUsername(username)) {
+                model.addAttribute("errorMessage", "El nombre de usuario ya está en uso");
+                model.addAttribute("roles", Rol.values());
+                return "register";
+            }
+            if (usuarioService.existsByEmail(email)) {
+                model.addAttribute("errorMessage", "El email ya está en uso");
+                model.addAttribute("roles", Rol.values());
+                return "register";
+            }
 
-        Usuario usuario = new Usuario();
-        usuario.setUsername(username);
-        usuario.setPassword(passwordEncoder.encode(password));
-        usuario.setEmail(email);
-        usuario.setRol(rol);
+            Usuario usuario = new Usuario();
+            usuario.setUsername(username);
+            usuario.setPassword(passwordEncoder.encode(password));
+            usuario.setEmail(email);
+            usuario.setRol(rol);
 
-        usuarioService.registerUsuario(usuario);
-        return "redirect:/login";
+            usuarioService.registerUsuario(usuario);
+            redirectAttributes.addFlashAttribute("successMessage", "Registro exitoso. Por favor, inicie sesión.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error en el registro: " + e.getMessage());
+            model.addAttribute("roles", Rol.values());
+            return "register";
+        }
     }
 }

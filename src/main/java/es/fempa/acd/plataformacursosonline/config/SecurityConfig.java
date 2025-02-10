@@ -13,39 +13,35 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
-
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole(Rol.ADMIN.name())
-                        .requestMatchers("/profesor/**").hasRole(Rol.PROFESOR.name())
-                        .requestMatchers("/estudiante/**").hasRole(Rol.ESTUDIANTE.name())
-                        .requestMatchers("/registro", "/login").permitAll()
-                        .requestMatchers("/usuarios/perfil/**").authenticated()
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .permitAll()
-                );
-
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/login", "/registro", "/css/**", "/js/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .failureHandler((request, response, exception) -> {
+                    String username = request.getParameter("username");
+                    String redirectUrl = "/login?error=" + username;
+                    response.sendRedirect(redirectUrl);
+                })
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .permitAll()
+            );
+        
         return http.build();
     }
 
