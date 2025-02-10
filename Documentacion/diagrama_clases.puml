@@ -1,4 +1,4 @@
-@startuml diagrama_clases
+@startuml
 package "es.fempa.acd.plataformacursosonline" {
     class PlataformacursosonlineApplication
 
@@ -36,24 +36,24 @@ package "es.fempa.acd.plataformacursosonline" {
     }
 }
 
-PlataformacursosonlineApplication --> config::SecurityConfig
-PlataformacursosonlineApplication --> controller::AuthController
-PlataformacursosonlineApplication --> controller::CursosController
-PlataformacursosonlineApplication --> controller::HomeController
-PlataformacursosonlineApplication --> controller::PublicacionesController
-PlataformacursosonlineApplication --> controller::RegistroController
-PlataformacursosonlineApplication --> controller::UsuarioController
+PlataformacursosonlineApplication --> SecurityConfig
+PlataformacursosonlineApplication --> AuthController
+PlataformacursosonlineApplication --> CursosController
+PlataformacursosonlineApplication --> HomeController
+PlataformacursosonlineApplication --> PublicacionesController
+PlataformacursosonlineApplication --> RegistroController
+PlataformacursosonlineApplication --> UsuarioController
 
-controller::CursosController --> service::CursoService
-controller::PublicacionesController --> service::PublicacionService
-controller::UsuarioController --> service::UsuarioService
-controller::HomeController --> service::UsuarioService
+CursosController --> CursoService
+PublicacionesController --> PublicacionService
+UsuarioController --> UsuarioService
+HomeController --> UsuarioService
 
-service::CursoService --> repository::CursoRepository
-service::PublicacionService --> repository::PublicacionRepository
-service::UsuarioService --> repository::UsuarioRepository
+CursoService --> CursoRepository
+PublicacionService --> PublicacionRepository
+UsuarioService --> UsuarioRepository
 
-model::Curso --> model::Usuario : "relación"
-model::Publicacion --> model::Usuario : "escrito por"
-model::Rol --> model::Usuario : "pertenece a"
+Curso --> Usuario : "relación"
+Publicacion --> Usuario : "escrito por"
+Rol --> Usuario : "pertenece a"
 @enduml
