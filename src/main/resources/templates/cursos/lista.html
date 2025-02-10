@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Lista de Cursos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
         body {
             background: linear-gradient(to right, #007bff, #6f42c1);
@@ -36,74 +36,163 @@
         .table-striped tbody tr:nth-of-type(odd) {
             background-color: rgba(255, 255, 255, 0.05);
         }
-        .input-group input {
-            background-color: rgba(255, 255, 255, 0.2);
-            border: none;
+
+        /* Estilos para el modo daltónico */
+        body.daltonic-mode {
+            background: linear-gradient(to right, #000000, #1a1a1a) !important;
+            color: #ffffff !important;
         }
 
-        .input-group button {
-            background-color: #007bff;
-            color: white;
+        .daltonic-mode .table {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .daltonic-mode .table th {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .daltonic-mode .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+        }
+
+        .daltonic-mode .btn-primary {
+            background-color: #ffffff !important;
+            border-color: #ffffff !important;
+            color: #000000 !important;
+        }
+
+        /* Estilos del toggle switch */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            margin: 8px 15px;
+            --light: #ffffff;
+            --dark: rgba(255, 255, 255, 0.2);
+        }
+        .switch-label {
+            position: absolute;
+            width: 100%;
+            height: 25px;
+            background-color: var(--dark);
+            border-radius: 25px;
+            cursor: pointer;
+            border: 2px solid var(--light);
+        }
+        .checkbox {
+            position: absolute;
+            display: none;
+        }
+        .slider {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+        .checkbox:checked ~ .slider {
+            background-color: var(--light);
+        }
+        .slider::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            box-shadow: inset 6px -2px 0px 0px var(--light);
+            background-color: var(--dark);
+            transition: 0.3s;
+        }
+        .checkbox:checked ~ .slider::before {
+            transform: translateX(25px);
+            background-color: var(--dark);
+            box-shadow: none;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1 class="my-4" style="font-weight: bold;">Lista de Cursos</h1>
-    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary mb-3">Añadir Curso</a>
-    <a href="/home" class="btn btn-primary mb-3">Volver</a>
-    <div class="input-group mb-3">
-        <input type="text" id="searchInput" class="form-control" placeholder="Buscar cursos...">
-        <button class="btn btn-outline-secondary" type="button" title="Buscar">
-            <i class="bi bi-search"></i>
-        </button>
+    <div class="container">
+        <div class="toggle-switch">
+            <label class="switch-label">
+                <input type="checkbox" class="checkbox" id="daltonicModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <h1 class="my-4" style="font-weight: bold;">Lista de Cursos</h1>
+        <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" href="/cursos/nuevo" class="btn btn-primary mb-3">Añadir Curso</a>
+        <a href="/home" class="btn btn-primary mb-3">Volver</a>
+        <div class="input-group mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar cursos...">
+            <button class="btn btn-outline-secondary" type="button" title="Buscar">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="curso : ${cursos}">
+                        <td th:text="${curso.nombre}">Nombre del Curso</td>
+                        <td th:text="${curso.descripcion}">Descripción del Curso</td>
+                        <td th:text="${curso.precio + ' €'}">Precio</td>
+                        <td>
+                            <a th:href="@{/cursos/{id}(id=${curso.id})}" class="btn btn-info btn-sm">Ver</a>
+                            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" 
+                               th:href="@{/cursos/{id}/editar(id=${curso.id})}" 
+                               class="btn btn-warning btn-sm">Editar</a>
+                            <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" 
+                                  th:action="@{/cursos/{id}/eliminar(id=${curso.id})}" 
+                                  method="post" 
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" 
+                                        onclick="return confirm('¿Estás seguro de que quieres eliminar este curso?')">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <table class="table table-striped" id="coursesTable">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="curso : ${cursos}" class="course-row">
-                <td th:text="${curso.nombre}" style="font-weight: bold;">Nombre</td>
-                <td th:text="${curso.descripcion}">Descripción</td>
-                <td th:text="${curso.precio}">0.00</td>
-                <td>
-                    <a th:href="@{/cursos/{id}(id=${curso.id})}" class="btn btn-info btn-sm">Ver</a>
-                    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/cursos/{id}/editar(id=${curso.id})}" class="btn btn-warning btn-sm">Editar</a>
-                    <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{/cursos/{id}/eliminar(id=${curso.id})}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
-                    <form th:if="${inscripciones[curso.id]}" th:action="@{/cursos/{id}/desapuntarse(id=${curso.id})}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-danger btn-sm">Desapuntarse</button>
-                    </form>
-                    <form th:if="${!inscripciones[curso.id]}" th:action="@{/cursos/{id}/unirse(id=${curso.id})}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-success btn-sm">Unirse</button>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll('.course-row');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toggle = document.getElementById('daltonicModeToggle');
+        
+        if (localStorage.getItem('daltonicMode') === 'enabled') {
+            document.body.classList.add('daltonic-mode');
+            toggle.checked = true;
+        }
 
-        rows.forEach(row => {
-            const courseName = row.querySelector('td').textContent.toLowerCase();
-            if (courseName.includes(filter)) {
-                row.style.display = '';
+        toggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('daltonic-mode');
+                localStorage.setItem('daltonicMode', 'enabled');
             } else {
-                row.style.display = 'none';
+                document.body.classList.remove('daltonic-mode');
+                localStorage.setItem('daltonicMode', 'disabled');
             }
         });
-    });
-</script>
+
+        // Funcionalidad de búsqueda
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchText) ? '' : 'none';
+            });
+        });
+    </script>
 </body>
 </html>

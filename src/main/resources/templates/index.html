@@ -33,16 +33,43 @@
         .centerMenu {
           margin-top: 200px;
         }
+
+        /* Estilos para el modo daltónico */
+        body.daltonic-mode {
+            background: linear-gradient(to right, #000000, #1a1a1a) !important;
+            color: #ffffff !important;
+        }
+
+    .daltonic-mode .overlay {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .daltonic-mode .hero {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+
+    .daltonic-mode .btn-primary {
+        background-color: #ffffff !important;
+        border-color: #ffffff !important;
+        color: #000000 !important;
+    }
     </style>
 </head>
 <body>
     <div class="overlay"></div>
     <div class="content">
-    <div class="hero centerMenu">
-        <h1 class="my-4">Bienvenido a la Plataforma de Cursos</h1>
-        <p>Explora nuestros cursos y mejora tus habilidades.</p>
-        <a href="/home" class="btn btn-primary">Ir a Home</a>
+        <div class="hero centerMenu">
+            <h1 class="my-4">Bienvenido a la Plataforma de Cursos</h1>
+            <p>Explora nuestros cursos y mejora tus habilidades.</p>
+            <a href="/home" class="btn btn-primary">Ir a Home</a>
+        </div>
     </div>
-  </div>
+    <script>
+        // Verificar si hay una preferencia guardada
+        if (localStorage.getItem('daltonicMode') === 'enabled') {
+            document.body.classList.add('daltonic-mode');
+        }
+    </script>
 </body>
 </html>

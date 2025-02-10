@@ -14,7 +14,7 @@
             max-width: 400px;
             margin: auto;
             padding: 2rem;
-            margin-top: 150px;
+            margin-top: 100px;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -29,49 +29,171 @@
         .colorTexto {
             color: black;
         }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            margin: 8px 15px;
+            --light: #ffffff;
+            --dark: rgba(255, 255, 255, 0.2);
+        }
+        .switch-label {
+            position: absolute;
+            width: 100%;
+            height: 25px;
+            background-color: var(--dark);
+            border-radius: 25px;
+            cursor: pointer;
+            border: 2px solid var(--light);
+        }
+        .checkbox {
+            position: absolute;
+            display: none;
+        }
+        .slider {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+        .checkbox:checked ~ .slider {
+            background-color: var(--light);
+        }
+        .slider::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            box-shadow: inset 6px -2px 0px 0px var(--light);
+            background-color: var(--dark);
+            transition: 0.3s;
+        }
+        .checkbox:checked ~ .slider::before {
+            transform: translateX(25px);
+            background-color: var(--dark);
+            box-shadow: none;
+        }
+
+        /* Estilos para el modo daltónico */
+        body.daltonic-mode {
+            background: linear-gradient(to right, #000000, #1a1a1a) !important;
+            color: #ffffff !important;
+        }
+
+        .daltonic-mode .register-container {
+            background-color: #1a1a1a !important;
+        }
+
+        .daltonic-mode .colorTexto {
+            color: #ffffff !important;
+        }
+
+        .daltonic-mode .form-control {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+
+        .daltonic-mode .btn-primary {
+            background-color: #ffffff !important;
+            border-color: #ffffff !important;
+            color: #000000 !important;
+        }
+
+        .daltonic-mode a {
+            color: #ffffff !important;
+        }
+        .daltonic-mode .alert-danger {
+         background-color: #ffffff !important;
+        border-color: #ffffff !important;
+        color: #000000 !important;
+        }
+
+        .daltonic-mode .alert-success {
+        background-color: #ffffff !important;
+        border-color: #ffffff !important;
+        color: #000000 !important;
+        }
     </style>
 </head>
 <body>
-<div class="register-container">
-    <h2 class="register-title colorTexto">Registro</h2>
-    <div th:if="${errorMessage}" class="alert alert-danger" id="errorPopup">
-        <span th:text="${errorMessage}"></span>
+    <div class="toggle-switch">
+        <label class="switch-label">
+            <input type="checkbox" class="checkbox" id="daltonicModeToggle">
+            <span class="slider"></span>
+        </label>
     </div>
-    <form th:action="@{/registro}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label colorTexto">Nombre de Usuario</label>
-            <input type="text" id="username" name="username" class="form-control" required>
+    <div class="register-container">
+        <h2 class="register-title colorTexto">Registro</h2>
+        <div th:if="${errorMessage}" class="alert alert-danger" id="errorPopup">
+            <span th:text="${errorMessage}"></span>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label colorTexto">Contraseña</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+        <form th:action="@{/registro}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label colorTexto">Nombre de Usuario</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label colorTexto">Contraseña</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label colorTexto">Correo Electrónico</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="rol" class="form-label colorTexto">Rol</label>
+                <select id="rol" name="rol" class="form-select" required>
+                    <option value="ESTUDIANTE">Estudiante</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Registrarse</button>
+        </form>
+        <div class="text-center mt-3">
+            <a href="/login" class="colorTexto">¿Ya tienes una cuenta? Inicia sesión aquí</a>
         </div>
-        <div class="mb-3">
-            <label for="email" class="form-label colorTexto">Correo Electrónico</label>
-            <input type="email" id="email" name="email" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="rol" class="form-label colorTexto">Rol</label>
-            <select id="rol" name="rol" class="form-select" required>
-                <option value="ESTUDIANTE">Estudiante</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Registrarse</button>
-    </form>
-    <div class="text-center mt-3">
-        <a href="/login" class="colorTexto">¿Ya tienes una cuenta? Inicia sesión aquí</a>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    window.onload = function() {
-        const errorPopup = document.getElementById('errorPopup');
-        if (errorPopup) {
-            setTimeout(() => {
-                errorPopup.style.display = 'none';
-            }, 3000);
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.onload = function() {
+            const errorPopup = document.getElementById('errorPopup');
+            if (errorPopup) {
+                setTimeout(() => {
+                    errorPopup.style.display = 'none';
+                }, 3000);
+            }
+        };
+        const toggle = document.getElementById('daltonicModeToggle');
+        
+        // Verificar si hay una preferencia guardada
+        if (localStorage.getItem('daltonicMode') === 'enabled') {
+            document.body.classList.add('daltonic-mode');
+            toggle.checked = true;
         }
-    };
-</script>
+
+        // Manejar el cambio del toggle
+        toggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('daltonic-mode');
+                localStorage.setItem('daltonicMode', 'enabled');
+            } else {
+                document.body.classList.remove('daltonic-mode');
+                localStorage.setItem('daltonicMode', 'disabled');
+            }
+        });
+    </script>
+    <script>
+        window.onload = function() {
+            const errorPopup = document.getElementById('errorPopup');
+            if (errorPopup) {
+                setTimeout(() => {
+                    errorPopup.style.display = 'none';
+                }, 3000);
+            }
+        };
+    </script>
 </body>
 </html>
