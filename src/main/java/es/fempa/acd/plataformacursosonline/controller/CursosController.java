@@ -229,4 +229,77 @@ public class CursosController {
         usuarioService.desinscribirUsuarioDeCurso(usuario.getId(), id);
         return "redirect:/cursos";
     }
+
+    /**
+     * Muestra la página de pago para un curso.
+     * Solo accesible para usuarios autenticados.
+     * @param id ID del curso
+     * @param model Modelo para pasar datos a la vista
+     * @param principal Usuario autenticado actual
+     */
+    @Operation(summary = "Mostrar página de pago para un curso")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Página de pago mostrada correctamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    })
+    @GetMapping("/{id}/pago")
+    @PreAuthorize("isAuthenticated()")
+    public String mostrarPaginaPago(@PathVariable Long id, Model model, Principal principal) {
+        try {
+            Curso curso = cursoService.buscarPorId(id);
+            if (curso == null) {
+                return "redirect:/error";
+            }
+            
+            Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            
+            if (usuarioService.estaInscritoEnCurso(usuario.getId(), id)) {
+                return "redirect:/cursos";
+            }
+            
+            model.addAttribute("curso", curso);
+            return "cursos/pago";
+        } catch (Exception e) {
+            return "redirect:/error";
+        }
+    }
+
+    /**
+     * Procesa el pago y la inscripción de un usuario en un curso.
+     * Solo accesible para usuarios autenticados.
+     * @param id ID del curso al que se quiere inscribir
+     * @param principal Usuario que realiza el pago
+     * @return Redirección a la página del curso si el pago es exitoso, o a error si falla
+     */
+    @Operation(summary = "Procesar pago e inscripción en un curso")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Pago procesado e inscripción realizada correctamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado")
+    })
+    @PostMapping("/{id}/procesar-pago")
+    @PreAuthorize("isAuthenticated()")
+    public String procesarPago(@PathVariable Long id, Principal principal) {
+        try {
+            Curso curso = cursoService.buscarPorId(id);
+            if (curso == null) {
+                return "redirect:/error";
+            }
+            
+            Usuario usuario = usuarioService.buscarPorUsername(principal.getName())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            
+            if (usuarioService.estaInscritoEnCurso(usuario.getId(), id)) {
+                return "redirect:/cursos";
+            }
+            
+            usuarioService.inscribirUsuarioEnCurso(usuario.getId(), id);
+            
+            return "redirect:/cursos/" + id;
+        } catch (Exception e) {
+            return "redirect:/error";
+        }
+    }
 }

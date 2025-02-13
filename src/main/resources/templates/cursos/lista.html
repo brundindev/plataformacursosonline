@@ -63,6 +63,15 @@
             border-color: #ffffff !important;
             color: #000000 !important;
         }
+        .daltonic-mode .btn-info,
+        .daltonic-mode .btn-success,
+        .daltonic-mode .btn-danger,
+        .daltonic-mode .btn-warning,
+        .daltonic-mode .btn-outline-secondary {
+            background-color: #ffffff !important;
+            border-color: #ffffff !important;
+            color: #000000 !important;
+        }
         .toggle-switch {
             position: relative;
             width: 50px;
@@ -151,6 +160,22 @@
                         <td th:text="${curso.precio + ' €'}">Precio</td>
                         <td>
                             <a th:href="@{/cursos/{id}(id=${curso.id})}" class="btn btn-info btn-sm">Ver</a>
+                            
+                            <div th:if="${#authorization.expression('isAuthenticated()')}" class="d-inline">
+                                <form th:if="${inscripciones[curso.id]}" 
+                                      th:action="@{/cursos/{id}/desapuntarse(id=${curso.id})}" 
+                                      method="post" 
+                                      style="display: inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Desapuntarse</button>
+                                </form>
+                                <form th:unless="${inscripciones[curso.id]}" 
+                                      th:action="@{/cursos/{id}/pago(id=${curso.id})}" 
+                                      method="get" 
+                                      style="display: inline;">
+                                    <button type="submit" class="btn btn-success btn-sm">Apuntarse</button>
+                                </form>
+                            </div>
+                            
                             <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" 
                                th:href="@{/cursos/{id}/editar(id=${curso.id})}" 
                                class="btn btn-warning btn-sm">Editar</a>
@@ -188,7 +213,6 @@
             }
         });
 
-        // Funcionalidad de búsqueda
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchText = this.value.toLowerCase();
             const rows = document.querySelectorAll('tbody tr');

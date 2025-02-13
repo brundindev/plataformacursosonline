@@ -464,21 +464,4 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
     window.addEventListener("orientationchange", handleResize);
     window.addEventListener("resize", handleResize);
-
-    const toggle = document.getElementById('daltonicModeToggle');
-
-    if (localStorage.getItem('daltonicMode') === 'enabled') {
-        document.body.classList.add('daltonic-mode');
-        toggle.checked = true;
-    }
-
-    toggle.addEventListener('change', function() {
-        if (toggle.checked) {
-            document.body.classList.add('daltonic-mode');
-            localStorage.setItem('daltonicMode', 'enabled');
-        } else {
-            document.body.classList.remove('daltonic-mode');
-            localStorage.setItem('daltonicMode', 'disabled');
-        }
-    });
 });

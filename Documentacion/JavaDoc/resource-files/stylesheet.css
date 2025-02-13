@@ -1459,15 +1459,3 @@ pre.snippet .highlighted {
     background-color: var(--snippet-highlight-color);
     border-radius: 10%;
 }
-body.daltonic-mode {
-    background-color: #f0f0f0;
-    color: #000000;
-}
-
-.navbar.daltonic-mode {
-    background-color: #333333;
-}
-
-.course-card.daltonic-mode {
-    background-color: #cccccc;
-}
