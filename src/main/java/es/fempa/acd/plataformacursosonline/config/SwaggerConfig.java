@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
@@ -44,13 +43,9 @@ public class SwaggerConfig {
          */
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Plataforma Cursos Online")
+                        .title("API de Plataforma de Cursos Online")
                         .version("1.0")
-                        .description("API para gestionar la plataforma de cursos online")
-                        .contact(new Contact()
-                                .name("Equipo de Desarrollo")
-                                .email("contacto@plataformacursosonline.com"))
-                        .license(mitLicense))
+                        .description("Documentación de la API REST para la plataforma de cursos online"))
                 .servers(List.of(devServer));
     }
 }

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="${curso.nombre}">Detalles del Curso</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
         body {
             margin-top: 50px;
@@ -107,14 +109,9 @@
 <body>
 
 <div class="container">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="d-flex align-items-center justify-content-between">
         <h1 class="my-4" th:text="${curso.nombre}">Nombre del Curso</h1>
-        <div class="toggle-switch">
-            <label class="switch-label">
-                <input type="checkbox" class="checkbox" id="daltonicModeToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
     </div>
     <p th:text="${curso.descripcion}">Descripción del Curso</p>
     <p>Precio: <span th:text="${curso.precio}">0.00</span> €</p>
@@ -128,11 +125,21 @@
     <div th:each="publicacion : ${publicaciones}" class="publicacion">
         <h3 th:text="${publicacion.titulo}">Título de la Publicación</h3>
         <p th:text="${publicacion.descripcion}">Descripción de la Publicación</p>
-        <p>
-            <span th:text="'Archivo: ' + ${publicacion.nombreArchivo}"></span>
-            <a th:href="@{/publicaciones/download(id=${publicacion.id})}" class="btn btn-secondary">Descargar</a>
-            <a th:href="@{/publicaciones/editar/{id}(id=${publicacion.id})}" class="btn btn-warning">Editar</a>
-        </p>
+        <div class="d-flex justify-content-between align-items-center">
+            <p>
+                <span th:text="'Archivo: ' + ${publicacion.nombreArchivo}"></span>
+                <a th:href="@{/publicaciones/download(id=${publicacion.id})}" class="btn btn-secondary">Descargar</a>
+                <a th:if="${#authorization.expression('hasRole(''PROFESOR'') or hasRole(''ADMIN'')')}" 
+                   th:href="@{/publicaciones/editar/{id}(id=${publicacion.id})}" 
+                   class="btn btn-warning">Editar</a>
+            </p>
+            <button th:if="${#authorization.expression('hasRole(''ESTUDIANTE'')')}"
+                    th:attr="data-publicacion-id=${publicacion.id}"
+                    class="btn btn-outline-light mark-read-btn">
+                <i class="bi bi-x-circle-fill text-danger"></i>
+                <span>No leído</span>
+            </button>
+        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -153,6 +160,38 @@
             localStorage.setItem('daltonicMode', 'disabled');
         }
     });
+
+    document.querySelectorAll('.mark-read-btn').forEach(button => {
+        const publicacionId = button.getAttribute('data-publicacion-id');
+        const isRead = localStorage.getItem('publicacion_' + publicacionId) === 'read';
+        
+        updateButton(button, isRead);
+        
+        button.addEventListener('click', function() {
+            const currentState = localStorage.getItem('publicacion_' + publicacionId) === 'read';
+            const newState = !currentState;
+            
+            localStorage.setItem('publicacion_' + publicacionId, newState ? 'read' : 'unread');
+            updateButton(button, newState);
+        });
+    });
+
+    function updateButton(button, isRead) {
+        const icon = button.querySelector('i');
+        const text = button.querySelector('span');
+        
+        if (isRead) {
+            icon.className = 'bi bi-check-circle-fill text-success';
+            text.textContent = 'Leído';
+            button.classList.add('btn-outline-success');
+            button.classList.remove('btn-outline-light');
+        } else {
+            icon.className = 'bi bi-x-circle-fill text-danger';
+            text.textContent = 'No leído';
+            button.classList.add('btn-outline-light');
+            button.classList.remove('btn-outline-success');
+        }
+    }
 </script>
 </body>
 </html>

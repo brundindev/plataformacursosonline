@@ -1,11 +1,14 @@
 package es.fempa.acd.plataformacursosonline.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +27,7 @@ import es.fempa.acd.plataformacursosonline.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controlador para la gestión de usuarios.
@@ -143,36 +147,58 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESOR') or hasRole('ESTUDIANTE')")
     @PostMapping("/perfil/editar/{id}")
     public String editarPerfil(@PathVariable Long id,
-                               Principal principal,
-                               @RequestParam String username,
-                               @RequestParam String email,
-                               @RequestParam String password) {
-        CustomUserDetails userDetails = (CustomUserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-        Long userId = userDetails.getId();
+                          Principal principal,
+                          @RequestParam String username,
+                          @RequestParam String email,
+                          @RequestParam(required = false) String currentPassword,
+                          @RequestParam(required = false) String newPassword,
+                          @RequestParam(required = false) String confirmPassword,
+                          RedirectAttributes redirectAttributes,
+                          HttpServletRequest request) {
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+            Long userId = userDetails.getId();
 
-        if (!userId.equals(id)) {
-            throw new AccessDeniedException("No tienes permiso para editar este perfil");
+            if (!userId.equals(id)) {
+                throw new AccessDeniedException("No tienes permiso para editar este perfil");
+            }
+
+            Usuario usuario = usuarioService.buscarPorId(userId);
+            
+            if (currentPassword != null && !currentPassword.isEmpty() && 
+                newPassword != null && !newPassword.isEmpty() && 
+                confirmPassword != null && !confirmPassword.isEmpty()) {
+                
+                if (!newPassword.equals(confirmPassword)) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Las contraseñas nuevas no coinciden");
+                    return "redirect:/usuarios/perfil/editar/" + id;
+                }
+                
+                usuarioService.cambiarContraseña(userId, currentPassword, newPassword);
+                usuarioService.editarUsuario(userId, username, email, newPassword, usuario.getRol());
+            } else {
+                usuarioService.editarUsuario(userId, username, email, usuario.getPassword(), usuario.getRol());
+            }
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            List<GrantedAuthority> actualAuthorities = new ArrayList<>(auth.getAuthorities());
+            
+            Usuario usuarioActualizado = usuarioService.buscarPorId(userId);
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                new CustomUserDetails(usuarioActualizado),
+                auth.getCredentials(),
+                actualAuthorities
+            );
+            
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Perfil actualizado correctamente");
+            return "redirect:/home";
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/usuarios/perfil/editar/" + id;
         }
-
-        Usuario usuario = usuarioService.buscarPorId(userId);
-        if (usuario == null) {
-            throw new IllegalArgumentException("Usuario no encontrado");
-        }
-
-        usuarioService.editarUsuario(userId, username, email, password, usuario.getRol());
-
-        Usuario usuarioActualizado = usuarioService.buscarPorId(userId);
-        CustomUserDetails newUserDetails = new CustomUserDetails(usuarioActualizado);
-        
-        SecurityContextHolder.getContext().setAuthentication(
-            new UsernamePasswordAuthenticationToken(
-                newUserDetails, 
-                null, 
-                newUserDetails.getAuthorities()
-            )
-        );
-
-        return "redirect:/home";
     }
 
     @GetMapping("/acceso-denegado")

@@ -91,5 +91,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         public boolean isEnabled() {
             return true;
         }
+
+        public Usuario getUsuario() {
+            return usuario;
+        }
     }
 }

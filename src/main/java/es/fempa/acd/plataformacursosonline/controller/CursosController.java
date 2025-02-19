@@ -182,13 +182,14 @@ public class CursosController {
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
         if (!usuario.getRol().equals(Rol.ADMIN) && !usuarioService.estaInscritoEnCurso(usuario.getId(), id)) {
-            return "error";
+            return "redirect:/cursos";
         }
 
         Curso curso = cursoService.buscarPorId(id);
         if (curso == null) {
-            return "error";
+            return "redirect:/cursos";
         }
+        
         model.addAttribute("curso", curso);
         model.addAttribute("publicaciones", publicacionService.listarPublicacionesPorCurso(id));
         return "cursos/ver";

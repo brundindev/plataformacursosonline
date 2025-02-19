@@ -86,10 +86,17 @@ public class UsuarioService {
         
         usuario.setUsername(username);
         usuario.setEmail(email);
-        usuario.setPassword(password);
+        
+        if (password != null && !password.isEmpty() && !password.equals(usuario.getPassword())) {
+            usuario.setPassword(passwordEncoder.encode(password));
+        } else {
+            usuario.setPassword(password);
+        }
+        
         usuario.setRol(rol);
         usuarioRepository.save(usuario);
     }
+
 
     public Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id).orElse(null);
@@ -137,6 +144,19 @@ public class UsuarioService {
             .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado"));
 
         usuario.getCursos().remove(curso);
+        usuarioRepository.save(usuario);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') || hasRole('PROFESOR') || hasRole('ESTUDIANTE')")
+    public void cambiarContraseña(Long userId, String contraseñaActual, String nuevaContraseña) {
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(contraseñaActual, usuario.getPassword())) {
+            throw new IllegalArgumentException("La contraseña actual es incorrecta");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(nuevaContraseña));
         usuarioRepository.save(usuario);
     }
 }
